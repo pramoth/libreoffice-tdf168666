@@ -1,0 +1,25 @@
+diff --git a/sw/source/core/txtnode/fntcache.cxx b/sw/source/core/txtnode/fntcache.cxx
+index 2e665c90d..243984a3f 100644
+--- a/sw/source/core/txtnode/fntcache.cxx
++++ b/sw/source/core/txtnode/fntcache.cxx
+@@ -1492,7 +1492,9 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+             }
+ 
+             // Thai Justification
+-            if ( SwFontScript::CTL == nActual && nSpaceAdd )
++            // tdf#168666 test the precise value: nSpaceAdd is truncated to whole twips, so a line
++            // that needs less than 1 twip per character cell was not justified at all
++            if ( SwFontScript::CTL == nActual && rInf.GetSpace() )
+             {
+                 LanguageType aLang = rInf.GetFont()->GetLanguage( SwFontScript::CTL );
+ 
+@@ -1979,7 +1981,8 @@ TextFrameIndex SwFntObj::GetModelPositionForViewPoint(SwDrawTextInfo &rInf)
+         }
+ 
+         // Thai Justification
+-        if ( SwFontScript::CTL == nActual && nSpaceAdd )
++        // tdf#168666 test the precise value, see DrawText()
++        if ( SwFontScript::CTL == nActual && rInf.GetSpace() )
+         {
+             LanguageType aLang = rInf.GetFont()->GetLanguage( SwFontScript::CTL );
+ 
